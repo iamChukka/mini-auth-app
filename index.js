@@ -56,8 +56,8 @@ function handler(e) {
 
     console.log("Password: " + passwordInput.value);
     
-    document.getElementById("myTable").style.display = "block";
-    document.getElementById("myForm").style.display = "block";
+    document.getElementById("myTable").style.display = "flex";
+    document.getElementById("myForm").style.display = "flex";
     document.getElementById("login").style.display = "none";
 
   }
