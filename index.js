@@ -38,6 +38,7 @@ console.log('Chuka App Attempt');
 // for (let key of Object.keys(circle))
 //     console.log(key);
 
+
 let username= document.getElementById("uname").value;
 let password = document.getElementById("pword").value;
 
@@ -46,12 +47,39 @@ const usernameInput = document.querySelector('#uname');
 const passwordInput = document.querySelector('#pword');
 const submitBtn = document.querySelector('#submit'); 
 
-submitBtn.addEventListener('click', (e) => {
+submitBtn.addEventListener('click',handler)
+
+function handler(e) {
   e.preventDefault();
-  if (usernameInput.value=="admin"&&passwordInput.value=="online") {
+  if (usernameInput.value == "admin" && passwordInput.value == "online") {
     console.log("Username: " + usernameInput.value);
 
     console.log("Password: " + passwordInput.value);
+    
+    document.getElementById("myTable").style.display = "block";
+    document.getElementById("myForm").style.display = "block";
+    document.getElementById("login").style.display = "none";
+
   }
-})
+  else { 
+      alert("Wrong Username or Password ");
+  }
+}
+
+// const handler = (e) => {
+//   e.preventDefault();
+//   if (usernameInput.value == "admin" && passwordInput.value == "online") {
+//     console.log("Username: " + usernameInput.value);
+
+//     console.log("Password: " + passwordInput.value);
+    
+//     document.getElementById("myTable").style.display = "block";
+//     document.getElementById("myForm").style.display = "block";
+//     document.getElementById("login").style.display = "none";
+
+//   }
+//   else { 
+//       alert("Wrong Username or Password ");
+//   }
+// }
 
