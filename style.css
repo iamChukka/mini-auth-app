@@ -1,0 +1,54 @@
+body{
+    padding: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+    flex-basis: 50%;
+}
+
+body > div {
+    
+ 
+}
+
+body:nth-child(2) {
+    flex-grow: 2;
+}
+.wrap{
+    text-align: center;
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
+.left {
+    position: absolute;
+    left: 0px;
+    width: 300px;
+    border: 3px solid #73AD21;
+    padding: 10px;
+  }
+.right {
+    position: absolute;
+    right: 0px;
+    width: 300px;
+    border: 3px solid #73AD21;
+    padding: 10px;
+  }
+#myTable{
+    display: none;
+    width: 300px;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    flex-grow: 1;  
+}
+#myForm{
+    display: none;
+    width: 300px;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    flex-grow: 1;  
+}
+table, th, td {
+    border: 1px solid black;
+  }
