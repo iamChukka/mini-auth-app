@@ -57,7 +57,12 @@ function submission(e) {
   let editBtn = row.insertCell(3);
   let deleteBtn = row.insertCell(4);
 
-  // creating button element  
+  editBtn.innerHTML = "<button>Edit</button>";
+  deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+
+  //deleteBtn.onclick = handleDelete();
+
+  /* // creating button element  
   let edit = document.createElement('BUTTON');
   let del = document.createElement('BUTTON');
                   
@@ -73,8 +78,24 @@ function submission(e) {
   editBtn.appendChild(edit);
   deleteBtn.appendChild(del);
 
+  editBtn.addEventListener('click', editRow);
+  
+  deleteBtn.addEventListener('click', deleteRow); */
+
   descriptionInput.value = '';
   amountInput.value = '';
+}
+
+function handleEdit() { 
+  
+}
+
+function handleDelete(event) {
+  const targetRow = event.target.closest("tr");
+    const index = targetRow.rowIndex;
+    document.getElementById("table").deleteRow(index);
+  console.log("you clicked Delete");
+
 }
 
 /*
