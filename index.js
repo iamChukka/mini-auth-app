@@ -12,7 +12,7 @@ const submitBtn = document.querySelector("#submit");
 const descriptionInput = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 
-let key = 0;
+let key;
 
 
 loginBtn.addEventListener('click', handler)
@@ -33,7 +33,7 @@ function handler(e) {
       alert("Wrong Username or Password ");
   }
 }
-
+let editMode = false;
 submitBtn.addEventListener('click', submission)
 
 function submission(e) { 
@@ -43,23 +43,31 @@ function submission(e) {
   if (descriptionInput.value ==''|| amountInput.value ==''||amountInput.value<0) { 
     return alert("Enter Valid Description and Amount");
   }
-  key++;
+ 
   
   const table = document.getElementById("table");
+  if (editMode == false) {
+    let row = table.insertRow();
+    let serial = row.insertCell(0);
+    serial.innerHTML = row.rowIndex;
+    let description = row.insertCell(1);
+    description.innerHTML = descriptionInput.value;
+    let amount = row.insertCell(2);
+    amount.innerHTML = amountInput.value;
 
-  let row = table.insertRow();
-  let serial = row.insertCell(0);
-  serial.innerHTML = key;
-  let description = row.insertCell(1);
-  description.innerHTML = descriptionInput.value;
-  let amount = row.insertCell(2);
-  amount.innerHTML = amountInput.value;
-  let editBtn = row.insertCell(3);
-  let deleteBtn = row.insertCell(4);
+    let editBtn = row.insertCell(3);
+    let deleteBtn = row.insertCell(4);
 
-  editBtn.innerHTML = "<button>Edit</button>";
-  deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+    editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
+    deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+  }
+  else if (editMode == true) {
+    
+    table.rows[key].cells[1].innerHTML = descriptionInput.value;
+    table.rows[key].cells[2].innerHTML= amountInput.value;
+    
 
+  }
   //deleteBtn.onclick = handleDelete();
 
   /* // creating button element  
@@ -84,13 +92,26 @@ function submission(e) {
 
   descriptionInput.value = '';
   amountInput.value = '';
+  editMode = false;
 }
 
-function handleEdit() { 
+function handleEdit(event) { 
+  editMode = true;
+  const table = document.getElementById("table");
   
+
+  const targetRow = event.target.closest("tr");
+  const index = targetRow.rowIndex;
+  descriptionInput.value = table.rows[index].cells[1].innerHTML;
+  amountInput.value = table.rows[index].cells[2].innerHTML;
+
+  key = index;
+  console.log('You Clicked on Edit on ROW ' + index);
 }
 
 function handleDelete(event) {
+  editMode = false;
+
   const targetRow = event.target.closest("tr");
     const index = targetRow.rowIndex;
     document.getElementById("table").deleteRow(index);
