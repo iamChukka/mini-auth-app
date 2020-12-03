@@ -1,4 +1,4 @@
-console.log('Chuka App Attempt');
+//console.log('Chuka App Attempt');
 
 let username= document.getElementById("uname").value;
 let password = document.getElementById("pword").value;
@@ -20,9 +20,9 @@ loginBtn.addEventListener('click', handler)
 function handler(e) {
   e.preventDefault();
   if (usernameInput.value == "admin" && passwordInput.value == "online") {
-    console.log("Username: " + usernameInput.value);
+    //console.log("Username: " + usernameInput.value);
 
-    console.log("Password: " + passwordInput.value);
+    //console.log("Password: " + passwordInput.value);
     
     document.getElementById("myTable").style.display = "flex";
     document.getElementById("myForm").style.display = "flex";
@@ -48,8 +48,11 @@ function submission(e) {
   const table = document.getElementById("table");
   if (editMode == false) {
     let row = table.insertRow();
-    let serial = row.insertCell(0);
-    serial.innerHTML = row.rowIndex;
+    //let serial = row.insertCell(0);
+    // serial.innerHTML = row.rowIndex;
+    
+    row.insertCell(0);
+    
     let description = row.insertCell(1);
     description.innerHTML = descriptionInput.value;
     let amount = row.insertCell(2);
@@ -60,12 +63,13 @@ function submission(e) {
 
     editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
     deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+    assignSerialNumber();
   }
   else if (editMode == true) {
     
     table.rows[key].cells[1].innerHTML = descriptionInput.value;
     table.rows[key].cells[2].innerHTML= amountInput.value;
-    
+    editMode = false;
 
   }
   //deleteBtn.onclick = handleDelete();
@@ -92,7 +96,7 @@ function submission(e) {
 
   descriptionInput.value = '';
   amountInput.value = '';
-  editMode = false;
+  
 }
 
 function handleEdit(event) { 
@@ -106,19 +110,37 @@ function handleEdit(event) {
   amountInput.value = table.rows[index].cells[2].innerHTML;
 
   key = index;
-  console.log('You Clicked on Edit on ROW ' + index);
+  //console.log('You Clicked on Edit on ROW ' + index);
 }
 
 function handleDelete(event) {
   editMode = false;
-
+  const table = document.getElementById("table");
   const targetRow = event.target.closest("tr");
-    const index = targetRow.rowIndex;
-    document.getElementById("table").deleteRow(index);
-  console.log("you clicked Delete");
+  const index = targetRow.rowIndex;
+  table.deleteRow(index);
+  assignSerialNumber();
+  
+  //console.log("you clicked Delete");
 
 }
 
+function assignSerialNumber() { 
+  const table = document.getElementById("table");
+  //console.log(table.rows.length);
+
+  // Numbering using For Loop
+  // for (let i = 1; i < table.rows.length; i++) {
+  //    table.rows[i].cells[0].innerHTML = i;
+  // }
+
+  //Numbering using while loop
+  let i = 1;
+  while (i < table.rows.length) { 
+    table.rows[i].cells[0].innerHTML = i;
+    i++;
+  }
+}
 /*
 JS 
 -FOCUS
