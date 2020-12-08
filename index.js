@@ -202,10 +202,13 @@ function handleDelete(event) {
   const targetRow = event.target.closest("tr");
   const index = targetRow.rowIndex;
 
-  tableArray.splice(index - 1, index - 1);
-  table.deleteRow(index);
+  tableArray.splice(index - 1, 1);
+  
+  
   window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+  console.log(index);
 
+  table.deleteRow(index);
   assignSerialNumber();
   
   //console.log("you clicked Delete");
