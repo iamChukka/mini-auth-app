@@ -14,7 +14,7 @@ const amountInput = document.querySelector("#amount");
 
 let key;
 
-
+createTable();
 loginBtn.addEventListener('click', handler)
 
 function handler(e) {
@@ -33,10 +33,23 @@ function handler(e) {
       alert("Wrong Username or Password ");
   }
 }
+
+const tableEntry = {
+  description: '',
+  amount: '',
+  editButton: "<button onclick='handleEdit(event)'>Edit</button>",
+  deleteButton: "<button onclick= 'handleDelete(event)'>Delete</button>"
+}
+
+
 let editMode = false;
 submitBtn.addEventListener('click', submission)
 
 function submission(e) { 
+  const _localTable = window.localStorage.getItem('localTable');
+  let tableArray =  _localTable ? JSON.parse(_localTable) : [];
+
+  
   e.preventDefault();
 //  console.log("Description: " +descriptionInput.value);
 //  console.log("Amount: " + amountInput.value);
@@ -46,6 +59,7 @@ function submission(e) {
  
   
   const table = document.getElementById("table");
+  
   if (editMode == false) {
     let row = table.insertRow();
     //let serial = row.insertCell(0);
@@ -54,21 +68,54 @@ function submission(e) {
     row.insertCell(0);
     
     let description = row.insertCell(1);
+    tableEntry.description = descriptionInput.value;
     description.innerHTML = descriptionInput.value;
+    
+
     let amount = row.insertCell(2);
     amount.innerHTML = amountInput.value;
+    tableEntry.amount = amountInput.value;
 
     let editBtn = row.insertCell(3);
     let deleteBtn = row.insertCell(4);
 
-    editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
-    deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+    editBtn.innerHTML = tableEntry.editButton;
+    deleteBtn.innerHTML = tableEntry.deleteButton;
+    // editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
+    // tableEntry.editButton = editBtn.innerHTML;
+
+    // deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
+    // tableEntry.deleteButton = deleteBtn.innerHTML;
+
     assignSerialNumber();
+
+    // if (tableArray.length==0) {
+    //   tableArray[0] = tableEntry;
+    // }
+    // else {
+    //   tableArray[tableArray.length] = tableEntry;
+    // }
+
+    console.log('tABLE ENTRY ', tableEntry)
+    //tableArray[tableArray.length] = tableEntry;
+
+    //const newTable = [...tableArray, { description: descriptionInput.value, amount: amountInput.value}];
+    //console.log('FUCK: ', newTable);
+    window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
+
   }
   else if (editMode == true) {
     
     table.rows[key].cells[1].innerHTML = descriptionInput.value;
-    table.rows[key].cells[2].innerHTML= amountInput.value;
+    tableEntry.description = descriptionInput.value;
+
+    table.rows[key].cells[2].innerHTML = amountInput.value;
+    tableEntry.amount = amountInput.value;
+
+    tableArray[key-1] = tableEntry;
+
+    window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+
     editMode = false;
 
   }
@@ -99,9 +146,42 @@ function submission(e) {
   
 }
 
+function createTable() {
+  const _localTable = window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+  
+  console.log(tableArray);
+  const table = document.getElementById("table");
+   let i = 0;
+   while(i<tableArray.length){
+     let row = table.insertRow();
+     
+     row.insertCell(0);
+    
+    let description = row.insertCell(1);
+     description.innerHTML = tableArray[i].description;
+    
+
+    let amount = row.insertCell(2);
+     amount.innerHTML = tableArray[i].amount; 
+
+     let editBtn = row.insertCell(3);
+     editBtn.innerHTML = tableArray[i].editButton;
+
+     let deleteBtn = row.insertCell(4);
+     deleteBtn.innerHTML = tableArray[i].deleteButton;
+
+
+     i++
+   }
+
+   assignSerialNumber();
+}
+
 function handleEdit(event) { 
   editMode = true;
   const table = document.getElementById("table");
+
   
 
   const targetRow = event.target.closest("tr");
@@ -115,10 +195,17 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   editMode = false;
+  const _localTable = window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+
   const table = document.getElementById("table");
   const targetRow = event.target.closest("tr");
   const index = targetRow.rowIndex;
+
+  tableArray.splice(index - 1, index - 1);
   table.deleteRow(index);
+  window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+
   assignSerialNumber();
   
   //console.log("you clicked Delete");
