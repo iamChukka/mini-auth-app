@@ -13,26 +13,20 @@ const descriptionInput = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 
 let key;
+const records = localStorage.getItem('records');
 
-createTable();
-loginBtn.addEventListener('click', handler)
+// records = { admin: [...], chukaLogin: [...] };
 
-function handler(e) {
-  e.preventDefault();
-  if (usernameInput.value == "admin" && passwordInput.value == "online") {
-    //console.log("Username: " + usernameInput.value);
-
-    //console.log("Password: " + passwordInput.value);
-    
-    document.getElementById("myTable").style.display = "flex";
-    document.getElementById("myForm").style.display = "flex";
-    document.getElementById("loginPage").style.display = "none";
-
+const person = [
+  {
+    username: 'admin',
+    password: 'online',
+  },
+  {
+    username: 'chukaLogin',
+    password: 'try',
   }
-  else { 
-      alert("Wrong Username or Password ");
-  }
-}
+]
 
 const tableEntry = {
   description: '',
@@ -42,17 +36,43 @@ const tableEntry = {
 }
 
 
+let globalUsername;
+let globalPassword;
+let userTable;
+
+loginBtn.addEventListener('click', handler)
+
+let tableArray;
+
 let editMode = false;
 submitBtn.addEventListener('click', submission)
 
-function submission(e) { 
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray =  _localTable ? JSON.parse(_localTable) : [];
 
+function handler(e) {
+  e.preventDefault();
+  userTable = getTable(usernameInput.value, passwordInput.value);
+  
+//  if (usernameInput.value == "admin" && passwordInput.value == "online") {
+    globalUsername = usernameInput.value;
+    globalPassword = passwordInput.value;
+    createTable();
+
+    // document.getElementById("myTable").style.display = "flex";
+    // document.getElementById("myForm").style.display = "flex";
+    // document.getElementById("loginPage").style.display = "none";
+
+  // }
+  // else { 
+  //     alert("Wrong Username or Password ");
+  // }
+}
+
+function submission(e) { 
+  const _localTable = userTable;//window.localStorage.getItem('localTable');
+   tableArray =  _localTable ? _localTable : [];
   
   e.preventDefault();
-//  console.log("Description: " +descriptionInput.value);
-//  console.log("Amount: " + amountInput.value);
+
   if (descriptionInput.value ==''|| amountInput.value ==''||amountInput.value<0) { 
     return alert("Enter Valid Description and Amount");
   }
@@ -62,8 +82,7 @@ function submission(e) {
   
   if (editMode == false) {
     let row = table.insertRow();
-    //let serial = row.insertCell(0);
-    // serial.innerHTML = row.rowIndex;
+    
     
     row.insertCell(0);
     
@@ -81,27 +100,16 @@ function submission(e) {
 
     editBtn.innerHTML = tableEntry.editButton;
     deleteBtn.innerHTML = tableEntry.deleteButton;
-    // editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
-    // tableEntry.editButton = editBtn.innerHTML;
-
-    // deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
-    // tableEntry.deleteButton = deleteBtn.innerHTML;
+    
 
     assignSerialNumber();
 
-    // if (tableArray.length==0) {
-    //   tableArray[0] = tableEntry;
-    // }
-    // else {
-    //   tableArray[tableArray.length] = tableEntry;
-    // }
-
-    console.log('tABLE ENTRY ', tableEntry)
-    //tableArray[tableArray.length] = tableEntry;
-
-    //const newTable = [...tableArray, { description: descriptionInput.value, amount: amountInput.value}];
-    //console.log('FUCK: ', newTable);
-    window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
+   
+    //console.log('tABLE ENTRY ', tableEntry)
+    console.log(tableArray)
+    
+    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
+    window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray, tableEntry] }));
 
   }
   else if (editMode == true) {
@@ -114,43 +122,47 @@ function submission(e) {
 
     tableArray[key-1] = tableEntry;
 
-    window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+      window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray] }));
+
 
     editMode = false;
 
   }
-  //deleteBtn.onclick = handleDelete();
-
-  /* // creating button element  
-  let edit = document.createElement('BUTTON');
-  let del = document.createElement('BUTTON');
-                  
-  // creating text to be 
-  //displayed on button 
-  let editText = document.createTextNode("Edit"); 
-  let deleteText = document.createTextNode("Delete");
-  // appending text to button 
-  edit.appendChild(editText); 
-  del.appendChild(deleteText);
-    
-  // appending button to div 
-  editBtn.appendChild(edit);
-  deleteBtn.appendChild(del);
-
-  editBtn.addEventListener('click', editRow);
-  
-  deleteBtn.addEventListener('click', deleteRow); */
+ 
 
   descriptionInput.value = '';
   amountInput.value = '';
   
 }
 
+function getTable(username,password) { 
+  for (let i = 0; i < person.length;i++) { 
+    if (person[i].username == username && person[i].password == password) {
+        document.getElementById("myTable").style.display = "flex";
+        document.getElementById("myForm").style.display = "flex";
+        document.getElementById("loginPage").style.display = "none";
+      alert('You are Logged in as ' + username);
+      globalUsername = username;
+      let newTable = JSON.parse(records);
+
+      console.log(newTable)
+
+      return newTable[person[i].username];
+      
+    }
+    else {
+        alert("Please recheck the Password");
+    }
+        
+  }
+}
+
 function createTable() {
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+  const _localTable = userTable;//window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? _localTable : [];
   
-  console.log(tableArray);
+  //console.log(tableArray);
   const table = document.getElementById("table");
    let i = 0;
    while(i<tableArray.length){
@@ -195,8 +207,8 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   editMode = false;
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+  const _localTable = userTable;//window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? _localTable : [];
 
   const table = document.getElementById("table");
   const targetRow = event.target.closest("tr");
@@ -204,8 +216,9 @@ function handleDelete(event) {
 
   tableArray.splice(index - 1, 1);
   
-  
-  window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+  //window.localStorage.setItem('localTable', JSON.stringify(...tableArray));
+
+  window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray] }));
   console.log(index);
 
   table.deleteRow(index);
@@ -217,13 +230,7 @@ function handleDelete(event) {
 
 function assignSerialNumber() { 
   const table = document.getElementById("table");
-  //console.log(table.rows.length);
-
-  // Numbering using For Loop
-  // for (let i = 1; i < table.rows.length; i++) {
-  //    table.rows[i].cells[0].innerHTML = i;
-  // }
-
+  
   //Numbering using while loop
   let i = 1;
   while (i < table.rows.length) { 
@@ -231,6 +238,7 @@ function assignSerialNumber() {
     i++;
   }
 }
+
 /*
 JS 
 -FOCUS
@@ -239,22 +247,3 @@ JS
 -Click
 
 */
-
-
-// const handler = (e) => {
-//   e.preventDefault();
-//   if (usernameInput.value == "admin" && passwordInput.value == "online") {
-//     console.log("Username: " + usernameInput.value);
-
-//     console.log("Password: " + passwordInput.value);
-    
-//     document.getElementById("myTable").style.display = "block";
-//     document.getElementById("myForm").style.display = "block";
-//     document.getElementById("login").style.display = "none";
-
-//   }
-//   else { 
-//       alert("Wrong Username or Password ");
-//   }
-// }
- 
