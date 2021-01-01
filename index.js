@@ -53,8 +53,8 @@ function handler(e) {
   userTable = getTable(usernameInput.value, passwordInput.value);
   
 //  if (usernameInput.value == "admin" && passwordInput.value == "online") {
-    globalUsername = usernameInput.value;
-    globalPassword = passwordInput.value;
+    //globalUsername = usernameInput.value;
+    //globalPassword = passwordInput.value;
     createTable();
 
     // document.getElementById("myTable").style.display = "flex";
@@ -76,7 +76,6 @@ function submission(e) {
   if (descriptionInput.value ==''|| amountInput.value ==''||amountInput.value<0) { 
     return alert("Enter Valid Description and Amount");
   }
- 
   
   const table = document.getElementById("table");
   
@@ -103,14 +102,22 @@ function submission(e) {
     
 
     assignSerialNumber();
+    if (tableArray[globalUsername] == null) {
+      tableArray[globalUsername] = [tableEntry];
 
-   
+    } else { 
+      tableArray[globalUsername] = [...tableArray[globalUsername], tableEntry];
+
+    }
+    console.log(tableArray);
     //console.log('tABLE ENTRY ', tableEntry)
-    console.log(tableArray)
+    //console.log(tableArray)
     
-    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
-    window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray, tableEntry] }));
 
+    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
+    window.localStorage.setItem('records', JSON.stringify(tableArray));
+    //window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray, tableEntry] }));
+    
   }
   else if (editMode == true) {
     
@@ -119,11 +126,11 @@ function submission(e) {
 
     table.rows[key].cells[2].innerHTML = amountInput.value;
     tableEntry.amount = amountInput.value;
-
-    tableArray[key-1] = tableEntry;
-
+    
+    tableArray[globalUsername][key-1] = tableEntry;
+    
     //window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
-      window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray] }));
+      window.localStorage.setItem('records', JSON.stringify(tableArray));
 
 
     editMode = false;
@@ -146,9 +153,9 @@ function getTable(username,password) {
       globalUsername = username;
       let newTable = JSON.parse(records);
 
-      console.log(newTable)
+      
 
-      return newTable[person[i].username];
+      return newTable;
       
     }
     else {
@@ -159,7 +166,7 @@ function getTable(username,password) {
 }
 
 function createTable() {
-  const _localTable = userTable;//window.localStorage.getItem('localTable');
+  const _localTable = userTable[globalUsername];//window.localStorage.getItem('localTable');
   let tableArray = _localTable ? _localTable : [];
   
   //console.log(tableArray);
@@ -214,11 +221,11 @@ function handleDelete(event) {
   const targetRow = event.target.closest("tr");
   const index = targetRow.rowIndex;
 
-  tableArray.splice(index - 1, 1);
+  tableArray[globalUsername].splice(index - 1, 1);
   
   //window.localStorage.setItem('localTable', JSON.stringify(...tableArray));
 
-  window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray] }));
+  window.localStorage.setItem('records', JSON.stringify(tableArray));
   console.log(index);
 
   table.deleteRow(index);
