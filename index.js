@@ -13,7 +13,7 @@ const descriptionInput = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 
 let key;
-const records = localStorage.getItem('records');
+//const records = localStorage.getItem('records');
 
 // records = { admin: [...], chukaLogin: [...] };
 
@@ -50,27 +50,18 @@ submitBtn.addEventListener('click', submission)
 
 function handler(e) {
   e.preventDefault();
-
-  //let newTable = JSON.parse(records);
+  const records = localStorage.getItem('records');
   userTable =JSON.parse(records);
   globalUsername = getAccount(usernameInput.value, passwordInput.value);
-  
-//  if (usernameInput.value == "admin" && passwordInput.value == "online") {
-    //globalUsername = usernameInput.value;
-    //globalPassword = passwordInput.value;
+ 
     createTable();
 
-    // document.getElementById("myTable").style.display = "flex";
-    // document.getElementById("myForm").style.display = "flex";
-    // document.getElementById("loginPage").style.display = "none";
 
-  // }
-  // else { 
-  //     alert("Wrong Username or Password ");
-  // }
 }
 
 function submission(e) { 
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
   const _localTable = userTable;//window.localStorage.getItem('localTable');
    tableArray =  _localTable ? _localTable : [];
   
@@ -109,17 +100,17 @@ function submission(e) {
       tableArray[globalUsername] = [tableEntry];
 
     } else { 
-      tableArray[globalUsername] = [...tableArray[globalUsername], tableEntry];
+      console.log("This is one new row" + JSON.stringify(tableEntry));
+      console.log("This is pre-additions" + JSON.stringify(tableArray[globalUsername]));
 
+      tableArray[globalUsername] = [...tableArray[globalUsername], tableEntry];
+      // myNewTable = JSON.stringify([tableArray[globalUsername], tableEntry]);
+      // console.log(myNewTable);
     }
     console.log(tableArray);
-    //console.log('tABLE ENTRY ', tableEntry)
-    //console.log(tableArray)
-    
-
-    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
+        
+ 
     window.localStorage.setItem('records', JSON.stringify(tableArray));
-    //window.localStorage.setItem('records', JSON.stringify({ [globalUsername]: [...tableArray, tableEntry] }));
     
   }
   else if (editMode == true) {
@@ -132,8 +123,7 @@ function submission(e) {
     
     tableArray[globalUsername][key-1] = tableEntry;
     
-    //window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
-      window.localStorage.setItem('records', JSON.stringify(tableArray));
+    window.localStorage.setItem('records', JSON.stringify(tableArray));
 
 
     editMode = false;
@@ -164,6 +154,8 @@ function getAccount(username,password) {
 }
 
 function createTable() {
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
   const _localTable = userTable[globalUsername];//window.localStorage.getItem('localTable');
   let tableArray = _localTable ? _localTable : [];
   
@@ -212,6 +204,8 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   editMode = false;
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
   const _localTable = userTable;//window.localStorage.getItem('localTable');
   let tableArray = _localTable ? _localTable : [];
 
@@ -221,15 +215,12 @@ function handleDelete(event) {
 
   tableArray[globalUsername].splice(index - 1, 1);
   
-  //window.localStorage.setItem('localTable', JSON.stringify(...tableArray));
-
   window.localStorage.setItem('records', JSON.stringify(tableArray));
   console.log(index);
 
   table.deleteRow(index);
   assignSerialNumber();
   
-  //console.log("you clicked Delete");
 
 }
 
