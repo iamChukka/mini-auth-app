@@ -50,7 +50,10 @@ submitBtn.addEventListener('click', submission)
 
 function handler(e) {
   e.preventDefault();
-  userTable = getTable(usernameInput.value, passwordInput.value);
+
+  //let newTable = JSON.parse(records);
+  userTable =JSON.parse(records);
+  globalUsername = getAccount(usernameInput.value, passwordInput.value);
   
 //  if (usernameInput.value == "admin" && passwordInput.value == "online") {
     //globalUsername = usernameInput.value;
@@ -143,26 +146,21 @@ function submission(e) {
   
 }
 
-function getTable(username,password) { 
-  for (let i = 0; i < person.length;i++) { 
+function getAccount(username,password) { 
+  for (let i = 0; i < person.length; i++) {
     if (person[i].username == username && person[i].password == password) {
         document.getElementById("myTable").style.display = "flex";
         document.getElementById("myForm").style.display = "flex";
         document.getElementById("loginPage").style.display = "none";
-      alert('You are Logged in as ' + username);
-      globalUsername = username;
-      let newTable = JSON.parse(records);
-
-      
-
-      return newTable;
-      
+        alert('You are Logged in as ' + username);
+        return username;
+    
+      }
     }
-    else {
-        alert("Please recheck the Password");
-    }
-        
-  }
+  
+  return alert('Please Check Username and Password');
+
+ 
 }
 
 function createTable() {
