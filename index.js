@@ -13,26 +13,20 @@ const descriptionInput = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 
 let key;
+//const records = localStorage.getItem('records');
 
-createTable();
-loginBtn.addEventListener('click', handler)
+// records = { admin: [...], chukaLogin: [...] };
 
-function handler(e) {
-  e.preventDefault();
-  if (usernameInput.value == "admin" && passwordInput.value == "online") {
-    //console.log("Username: " + usernameInput.value);
-
-    //console.log("Password: " + passwordInput.value);
-    
-    document.getElementById("myTable").style.display = "flex";
-    document.getElementById("myForm").style.display = "flex";
-    document.getElementById("loginPage").style.display = "none";
-
+const person = [
+  {
+    username: 'admin',
+    password: 'online',
+  },
+  {
+    username: 'chukaLogin',
+    password: 'try',
   }
-  else { 
-      alert("Wrong Username or Password ");
-  }
-}
+]
 
 const tableEntry = {
   description: '',
@@ -42,28 +36,46 @@ const tableEntry = {
 }
 
 
+let globalUsername;
+let globalPassword;
+let userTable;
+
+loginBtn.addEventListener('click', handler)
+
+let tableArray;
+
 let editMode = false;
 submitBtn.addEventListener('click', submission)
 
-function submission(e) { 
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray =  _localTable ? JSON.parse(_localTable) : [];
 
+function handler(e) {
+  e.preventDefault();
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
+  globalUsername = getAccount(usernameInput.value, passwordInput.value);
+ 
+    createTable();
+
+
+}
+
+function submission(e) { 
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
+  const _localTable = userTable;//window.localStorage.getItem('localTable');
+   tableArray =  _localTable ? _localTable : [];
   
   e.preventDefault();
-//  console.log("Description: " +descriptionInput.value);
-//  console.log("Amount: " + amountInput.value);
+
   if (descriptionInput.value ==''|| amountInput.value ==''||amountInput.value<0) { 
     return alert("Enter Valid Description and Amount");
   }
- 
   
   const table = document.getElementById("table");
   
   if (editMode == false) {
     let row = table.insertRow();
-    //let serial = row.insertCell(0);
-    // serial.innerHTML = row.rowIndex;
+    
     
     row.insertCell(0);
     
@@ -81,28 +93,25 @@ function submission(e) {
 
     editBtn.innerHTML = tableEntry.editButton;
     deleteBtn.innerHTML = tableEntry.deleteButton;
-    // editBtn.innerHTML = "<button onclick='handleEdit(event)'>Edit</button>";
-    // tableEntry.editButton = editBtn.innerHTML;
-
-    // deleteBtn.innerHTML = "<button onclick= 'handleDelete(event)'>Delete</button>";
-    // tableEntry.deleteButton = deleteBtn.innerHTML;
+    
 
     assignSerialNumber();
+    if (tableArray[globalUsername] == null) {
+      tableArray[globalUsername] = [tableEntry];
 
-    // if (tableArray.length==0) {
-    //   tableArray[0] = tableEntry;
-    // }
-    // else {
-    //   tableArray[tableArray.length] = tableEntry;
-    // }
+    } else { 
+      console.log("This is one new row" + JSON.stringify(tableEntry));
+      console.log("This is pre-additions" + JSON.stringify(tableArray[globalUsername]));
 
-    console.log('tABLE ENTRY ', tableEntry)
-    //tableArray[tableArray.length] = tableEntry;
-
-    //const newTable = [...tableArray, { description: descriptionInput.value, amount: amountInput.value}];
-    //console.log('FUCK: ', newTable);
-    window.localStorage.setItem('localTable', JSON.stringify([...tableArray, tableEntry]));
-
+      tableArray[globalUsername] = [...tableArray[globalUsername], tableEntry];
+      // myNewTable = JSON.stringify([tableArray[globalUsername], tableEntry]);
+      // console.log(myNewTable);
+    }
+    console.log(tableArray);
+        
+ 
+    window.localStorage.setItem('records', JSON.stringify(tableArray));
+    
   }
   else if (editMode == true) {
     
@@ -111,46 +120,46 @@ function submission(e) {
 
     table.rows[key].cells[2].innerHTML = amountInput.value;
     tableEntry.amount = amountInput.value;
+    
+    tableArray[globalUsername][key-1] = tableEntry;
+    
+    window.localStorage.setItem('records', JSON.stringify(tableArray));
 
-    tableArray[key-1] = tableEntry;
-
-    window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
 
     editMode = false;
 
   }
-  //deleteBtn.onclick = handleDelete();
-
-  /* // creating button element  
-  let edit = document.createElement('BUTTON');
-  let del = document.createElement('BUTTON');
-                  
-  // creating text to be 
-  //displayed on button 
-  let editText = document.createTextNode("Edit"); 
-  let deleteText = document.createTextNode("Delete");
-  // appending text to button 
-  edit.appendChild(editText); 
-  del.appendChild(deleteText);
-    
-  // appending button to div 
-  editBtn.appendChild(edit);
-  deleteBtn.appendChild(del);
-
-  editBtn.addEventListener('click', editRow);
-  
-  deleteBtn.addEventListener('click', deleteRow); */
+ 
 
   descriptionInput.value = '';
   amountInput.value = '';
   
 }
 
-function createTable() {
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+function getAccount(username,password) { 
+  for (let i = 0; i < person.length; i++) {
+    if (person[i].username == username && person[i].password == password) {
+        document.getElementById("myTable").style.display = "flex";
+        document.getElementById("myForm").style.display = "flex";
+        document.getElementById("loginPage").style.display = "none";
+        alert('You are Logged in as ' + username);
+        return username;
+    
+      }
+    }
   
-  console.log(tableArray);
+  return alert('Please Check Username and Password');
+
+ 
+}
+
+function createTable() {
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
+  const _localTable = userTable[globalUsername];//window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? _localTable : [];
+  
+  //console.log(tableArray);
   const table = document.getElementById("table");
    let i = 0;
    while(i<tableArray.length){
@@ -195,35 +204,29 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   editMode = false;
-  const _localTable = window.localStorage.getItem('localTable');
-  let tableArray = _localTable ? JSON.parse(_localTable) : [];
+  const records = localStorage.getItem('records');
+  userTable =JSON.parse(records);
+  const _localTable = userTable;//window.localStorage.getItem('localTable');
+  let tableArray = _localTable ? _localTable : [];
 
   const table = document.getElementById("table");
   const targetRow = event.target.closest("tr");
   const index = targetRow.rowIndex;
 
-  tableArray.splice(index - 1, 1);
+  tableArray[globalUsername].splice(index - 1, 1);
   
-  
-  window.localStorage.setItem('localTable', JSON.stringify([...tableArray]));
+  window.localStorage.setItem('records', JSON.stringify(tableArray));
   console.log(index);
 
   table.deleteRow(index);
   assignSerialNumber();
   
-  //console.log("you clicked Delete");
 
 }
 
 function assignSerialNumber() { 
   const table = document.getElementById("table");
-  //console.log(table.rows.length);
-
-  // Numbering using For Loop
-  // for (let i = 1; i < table.rows.length; i++) {
-  //    table.rows[i].cells[0].innerHTML = i;
-  // }
-
+  
   //Numbering using while loop
   let i = 1;
   while (i < table.rows.length) { 
@@ -231,6 +234,7 @@ function assignSerialNumber() {
     i++;
   }
 }
+
 /*
 JS 
 -FOCUS
@@ -239,22 +243,3 @@ JS
 -Click
 
 */
-
-
-// const handler = (e) => {
-//   e.preventDefault();
-//   if (usernameInput.value == "admin" && passwordInput.value == "online") {
-//     console.log("Username: " + usernameInput.value);
-
-//     console.log("Password: " + passwordInput.value);
-    
-//     document.getElementById("myTable").style.display = "block";
-//     document.getElementById("myForm").style.display = "block";
-//     document.getElementById("login").style.display = "none";
-
-//   }
-//   else { 
-//       alert("Wrong Username or Password ");
-//   }
-// }
- 
