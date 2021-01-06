@@ -9,6 +9,7 @@ const passwordInput = document.querySelector('#pword');
 const loginBtn = document.querySelector('#login'); 
 
 const submitBtn = document.querySelector("#submit");
+const logoutBtn = document.querySelector("#logoutButton");
 const descriptionInput = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 
@@ -47,6 +48,27 @@ let tableArray;
 let editMode = false;
 submitBtn.addEventListener('click', submission)
 
+logoutBtn.addEventListener('click', logouthandler)
+
+function logouthandler(e) {
+  e.preventDefault();
+  const table = document.getElementById("table");
+  let i = 1
+  while (i < table.rows.length) { 
+    table.deleteRow(i);
+  }
+
+
+  username = window.localStorage.getItem("session");
+  document.getElementById("myTable").style.display = "none";
+  document.getElementById("myForm").style.display = "none";
+  document.getElementById("loginPage").style.display = "block";
+  document.getElementById("logout").style.display = "none";
+  alert("You are Logged out of " + username + "'s session");
+        
+  username = '';
+  window.localStorage.setItem("session", username);
+}
 
 function handler(e) {
   e.preventDefault();
@@ -55,7 +77,8 @@ function handler(e) {
   globalUsername = getAccount(usernameInput.value, passwordInput.value);
  
     createTable();
-
+  usernameInput.value = '';
+  passwordInput.value = '';
 
 }
 
@@ -139,10 +162,13 @@ function submission(e) {
 function getAccount(username,password) { 
   for (let i = 0; i < person.length; i++) {
     if (person[i].username == username && person[i].password == password) {
-        document.getElementById("myTable").style.display = "flex";
-        document.getElementById("myForm").style.display = "flex";
-        document.getElementById("loginPage").style.display = "none";
-        alert('You are Logged in as ' + username);
+      document.getElementById("myTable").style.display = "flex";
+      document.getElementById("myForm").style.display = "flex";
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("logout").style.display = "inline";
+      alert('You are Logged in as ' + username);
+        
+      window.localStorage.setItem("session", username);
         return username;
     
       }

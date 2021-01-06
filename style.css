@@ -10,6 +10,9 @@ body > div {
     
  
 }
+#logout{
+    display: none;
+}
 
 body:nth-child(2) {
     flex-grow: 2;
