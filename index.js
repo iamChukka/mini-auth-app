@@ -37,11 +37,10 @@ const tableEntry = {
 
 
 let globalUsername;
-let globalPassword;
-let userTable;
 
 let page;
-let tableArray;
+let userTable;
+//let tableArray;
 
 let editMode = false;
 
@@ -99,8 +98,8 @@ function logouthandler(e) {
 
 function handler(e) {
   e.preventDefault();
-  const records = localStorage.getItem('records');
-  userTable = JSON.parse(records);
+  // const records = localStorage.getItem('records');
+  // userTable = JSON.parse(records);
   globalUsername = getAccount(usernameInput.value, passwordInput.value);
  
     createTable();
@@ -114,7 +113,7 @@ function submission(e) {
   const records = localStorage.getItem('records');
   userTable =JSON.parse(records);
   const _localTable = userTable;//window.localStorage.getItem('localTable');
-   tableArray =  _localTable ? _localTable : [];
+  let tableArray =  _localTable ? _localTable : [];
   
   e.preventDefault();
 
@@ -151,8 +150,8 @@ function submission(e) {
       tableArray[globalUsername] = [tableEntry];
 
     } else { 
-      console.log("This is one new row" + JSON.stringify(tableEntry));
-      console.log("This is pre-additions" + JSON.stringify(tableArray[globalUsername]));
+      //console.log("This is one new row" + JSON.stringify(tableEntry));
+      //console.log("This is pre-additions" + JSON.stringify(tableArray[globalUsername]));
 
       tableArray[globalUsername] = [...tableArray[globalUsername], tableEntry];
       // myNewTable = JSON.stringify([tableArray[globalUsername], tableEntry]);
@@ -160,8 +159,9 @@ function submission(e) {
     }
     console.log(tableArray);
         
- 
-    window.localStorage.setItem('records', JSON.stringify(tableArray));
+    //window.localStorage.setItem('test', JSON.stringify({ ...tableArray }) );
+
+    window.localStorage.setItem('records', JSON.stringify({... tableArray }));
     
   }
   else if (editMode == true) {
@@ -174,7 +174,7 @@ function submission(e) {
     
     tableArray[globalUsername][key-1] = tableEntry;
     
-    window.localStorage.setItem('records', JSON.stringify(tableArray));
+    window.localStorage.setItem('records', JSON.stringify({... tableArray }));
 
 
     editMode = false;
@@ -269,7 +269,7 @@ function handleDelete(event) {
 
   tableArray[globalUsername].splice(index - 1, 1);
   
-  window.localStorage.setItem('records', JSON.stringify(tableArray));
+  window.localStorage.setItem('records', JSON.stringify({... tableArray }));
   console.log(index);
 
   table.deleteRow(index);
