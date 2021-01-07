@@ -15,7 +15,6 @@ const amountInput = document.querySelector("#amount");
 
 let key;
 //const records = localStorage.getItem('records');
-
 // records = { admin: [...], chukaLogin: [...] };
 
 const person = [
@@ -41,14 +40,39 @@ let globalUsername;
 let globalPassword;
 let userTable;
 
-loginBtn.addEventListener('click', handler)
-
+let page;
 let tableArray;
 
 let editMode = false;
+
+loginBtn.addEventListener('click', handler)
+
 submitBtn.addEventListener('click', submission)
 
 logoutBtn.addEventListener('click', logouthandler)
+
+
+reload();
+function reload() {
+  username = window.localStorage.getItem("session");
+  page = window.localStorage.getItem("page");
+  if (username == '') {
+    document.getElementById("myTable").style.display = "none";
+    document.getElementById("myForm").style.display = "none";
+    document.getElementById("loginPage").style.display = "block";
+    document.getElementById("logout").style.display = "none";
+  }
+  else if (page == 2) { 
+    document.getElementById("myTable").style.display = "flex";
+    document.getElementById("myForm").style.display = "flex";
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("logout").style.display = "inline";
+    globalUsername = username;
+    createTable();
+  }
+}
+
+
 
 function logouthandler(e) {
   e.preventDefault();
@@ -58,7 +82,7 @@ function logouthandler(e) {
     table.deleteRow(i);
   }
 
-
+  
   username = window.localStorage.getItem("session");
   document.getElementById("myTable").style.display = "none";
   document.getElementById("myForm").style.display = "none";
@@ -68,18 +92,22 @@ function logouthandler(e) {
         
   username = '';
   window.localStorage.setItem("session", username);
+  page = 1
+  window.localStorage.setItem("page", page);
+
 }
 
 function handler(e) {
   e.preventDefault();
   const records = localStorage.getItem('records');
-  userTable =JSON.parse(records);
+  userTable = JSON.parse(records);
   globalUsername = getAccount(usernameInput.value, passwordInput.value);
  
     createTable();
   usernameInput.value = '';
   passwordInput.value = '';
-
+  page = 2
+  window.localStorage.setItem("page", page);
 }
 
 function submission(e) { 
